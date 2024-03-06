@@ -6,9 +6,10 @@ require "../../vendor/autoload.php";
 require "../../bootstrap/init.php";
 
 use Medoo\Medoo;
+use App\Interfaces\CrudInterface;
 use Exception;
 
-class BaseModel
+class BaseModel implements CrudInterface
 {
     protected $connection;
     protected $table;
@@ -45,5 +46,11 @@ class BaseModel
     {
         $result = $this->connection->get($this->table, '*', [$this->primaryKey => $id]);
         return (object)$result;
+    }
+    # delete function (return row count)
+    public function delete(array $where): int
+    {
+        $result = $this->connection->delete($this->table, $where);
+        return $result->rowCount();
     }
 }
