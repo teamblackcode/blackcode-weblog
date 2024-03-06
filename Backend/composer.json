@@ -1,0 +1,21 @@
+{
+    "name": "blackcodeweblog/backend",
+    "description": "backend of weblog",
+    "type": "ptoject",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Blackcodeweblog\\Backend\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "mehdishahi",
+            "email": "mahdishahipro@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "catfan/medoo": "^2.1"
+    }
+}
