@@ -8,4 +8,4 @@ define('BASE_URL', 'http://localhost/blackcode-weblog/Backend/');
 
 # cache service constants
 define('CACHE_ENABLED', 1);
-define('CACHE_DIR', __DIR__ . '/cache/');
+define('CACHE_DIR', BASE_PATH . '/cache/');

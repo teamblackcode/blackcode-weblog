@@ -11,20 +11,22 @@ class CacheUtility
     # check enbale or disable cache service
     protected static $cacheEnabled = CACHE_ENABLED;
     # set time for expire cache
-    const EXPIRE_TIME = 3600;
+    const EXPIRE_TIME = 10;
 
     public static function init()
     {
-        self::$cacheFile = CACHE_DIR . md5($_SERVER['REQUEST_URL'], '.json');
+        self::$cacheFile = CACHE_DIR . md5($_SERVER['REQUEST_URI']) . '.json';
         if ($_SERVER['REQUEST_METHOD'] != 'GET') {
             self::$cacheEnabled = 0;
         }
     }
-    # check caceh file exist
+
+    # check cache file exist
     public static function cacheExist()
     {
         return (file_exists(self::$cacheFile) && (time() - self::EXPIRE_TIME) < filemtime(self::$cacheFile));
     }
+
     # start caching
     public static function startCaching()
     {
@@ -38,6 +40,7 @@ class CacheUtility
         }
         ob_start();
     }
+
     # end of caching
     public static function endCaching()
     {
@@ -48,9 +51,10 @@ class CacheUtility
         fclose($cachedFile);
         ob_end_flush();
     }
+
     public static function flush()
     {
-        $files = glob(CACHE_DIR, '*');
+        $files = glob(CACHE_DIR, "*");
         foreach ($files as $file) {
             if (is_file($file))
                 unlink($file);
