@@ -5,6 +5,8 @@ namespace App\Services;
 use Medoo\Medoo;
 use App\Interfaces\CrudInterface;
 use Exception;
+use App\Services\Validation;
+use App\Services\Validation\ValueValidation;
 
 class BaseModel implements CrudInterface
 {
@@ -25,6 +27,8 @@ class BaseModel implements CrudInterface
     # create function
     public function create(array $data): int
     {
+        if (!ValueValidation::isValidArrayArguments($data))
+            return false;
         $this->connection->insert($this->table, $data);
         return $this->connection->id();
     }
