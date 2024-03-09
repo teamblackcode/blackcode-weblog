@@ -1,6 +1,6 @@
 <?php
 require "../../../bootstrap/init.php";
-# we need a JWT token for create post    ------(important)
+# we need a JWT token for create & delete & update post    ------(important)
 use App\Utilities\Response;
 use App\Services\BaseModel;
 use App\Utilities\CacheUtility;
@@ -39,4 +39,10 @@ if ($requestMethod == 'GET') {
     if ($createdPostResult == 0)
         Response::respondAndDie(['خطا در ذخیره سازی پست! لطفا مقدار فیلد هارا درست وارد کنید'], Response::HTTP_BAD_REQUEST);
     Response::respondAndDie(['پست با موفقیت ایجاد شد'], Response::HTTP_CREATED);
+} else if ($requestMethod == "DELETE") {
+    $connection = new BaseModel('posts');
+    $deletedPostResult = $connection->delete(['id' => $requestBody['post_id']]);
+    if ($deletedPostResult == 0)
+        Response::respondAndDie(['عملیات حذف با شکست مواجه شد'], Response::HTTP_NOT_FOUND);
+    Response::respondAndDie(['پست مورد نظر حذف شد'], Response::HTTP_OK);
 }
