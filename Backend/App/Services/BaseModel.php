@@ -54,4 +54,8 @@ class BaseModel implements CrudInterface
         $result = $this->connection->delete($this->table, $where);
         return $result->rowCount();
     }
+    public function update($data, $where){
+        $result = $this->connection->update($this->table, $data,$where);
+        return $result->rowCount();
+    }
 }
