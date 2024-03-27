@@ -1,20 +1,25 @@
 {
-    "name": "blackcodeweblog/backend",
-    "description": "backend of weblog",
-    "type": "ptoject",
-    "license": "MIT",
+    "name": "blackcodeweblog/weblog",
+    "type": "project",
     "autoload": {
         "psr-4": {
-            "Blackcodeweblog\\Backend\\": "src/"
+            "App\\": "App/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
         }
     },
     "authors": [
         {
-            "name": "mehdishahi",
+            "name": "Mahdi Shahi",
             "email": "mahdishahipro@gmail.com"
         }
     ],
-    "minimum-stability": "stable",
+    "require-dev": {
+        "phpunit/phpunit": "11"
+    },
     "require": {
         "catfan/medoo": "^2.1"
     }
