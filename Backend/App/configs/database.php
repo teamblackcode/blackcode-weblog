@@ -1,17 +1,17 @@
 <?php
 return [
     'pdo'=>[
-        'driver'=>'mysql',
-        'host'=>'localhost',
-        'database'=>'blackcodeweblog',
-        'driver'=>'root',
-        'driver'=>'',
+        'driver'   =>'mysql',
+        'host'     =>'localhost',
+        'database' =>'blackcode_weblog',
+        'username' =>'root',
+        'password' =>'',
     ],
     'pdo_testing'=>[
         'driver'=>'mysql',
         'host'=>'localhost',
-        'database'=>'blackcodeweblog_testing',
-        'driver'=>'root',
-        'driver'=>'',
+        'database'=>'blackcode_weblog_testing',
+        'username'=>'root',
+        'password'=>'',
     ],
 ];

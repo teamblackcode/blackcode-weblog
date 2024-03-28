@@ -26,9 +26,9 @@ class ConfigTest extends TestCase
         $expectedData = [
             'driver' => 'mysql',
             'host' => 'localhost',
-            'database' => 'blackcodeweblog_testing',
-            'driver' => 'root',
-            'driver' => '',
+            'database' => 'blackcode_weblog_testing',
+            'username' => 'root',
+            'password' => '',
         ];
         $this->assertEquals($expectedData, $config);
     }
