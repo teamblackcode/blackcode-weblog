@@ -12,7 +12,7 @@ class Config
         if (!$filePath) {
             throw new ConfigFileNotFoundException();
         }
-        $fileContents = require $fileName;
+        $fileContents = require $filePath;
         return $fileContents;
     }
     public static function get(string $fileName, string $key = null)
