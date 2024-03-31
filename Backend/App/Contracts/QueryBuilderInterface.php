@@ -5,11 +5,12 @@ namespace App\Contracts;
 interface QueryBuilderInterface
 {
     public function where(string $column, string $value);
-    public function create(array $data): int;
-    public function update(array $data): int;
-    public function delete(int $id): int;
+    public function create(array $data);
+    public function update(array $data);
+    public function delete();
     public function get(array $columns = ['*']);
-    public function first(array $columns): object;
+    public function first(array $columns);
     public function find(int $id);
-    public function findBy(string $columns, $value): object;
+    public function findBy(string $columns, $value);
+    public function count();
 }

@@ -8,7 +8,6 @@ $baseDir = dirname($vendorDir);
 return array(
     'Tests\\' => array($baseDir . '/tests'),
     'PhpParser\\' => array($vendorDir . '/nikic/php-parser/lib/PhpParser'),
-    'Medoo\\' => array($vendorDir . '/catfan/medoo/src'),
     'DeepCopy\\' => array($vendorDir . '/myclabs/deep-copy/src/DeepCopy'),
     'App\\' => array($baseDir . '/App'),
 );

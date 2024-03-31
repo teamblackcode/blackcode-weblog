@@ -38,6 +38,17 @@ class QueryBuilderForUsersTableTest extends TestCase
         $this->assertEquals(10, $result);
     }
 
+    public function testItCanUpdateWithMultipleWhere()
+    {
+        $this->multipleInsertIntoDb(10, ['role' => 1]);
+        $result = $this->queryBuilder
+            ->table('users')
+            ->where('email', 'mahdishahipro@gmail.com')
+            ->where('fullname', 'mahdishahi')
+            ->update(['email' => 'mahdishahiwindows@gmail.com', 'fullname' => 'mohaddese panahi']);
+        $this->assertEquals(10, $result);
+    }
+
     public function testItCanGetData()
     {
         $this->multipleInsertIntoDb(5, ['role' => 1]);
@@ -47,13 +58,28 @@ class QueryBuilderForUsersTableTest extends TestCase
             ->table('users')
             ->where('role', 2)
             ->where('email', 'mahdishahipro@gmail.com')
-            ->get(['email']);
+            ->get();
         $this->assertIsArray($result);
         $this->assertNotNull($result);
-        $this->assertObjectHasProperty('email', $result[0]);
     }
 
-    public function testItCanGetFirstData()
+    public function testItCanFetchSpecificColumn()
+    {
+        $this->multipleInsertIntoDb(10, ['role' => 2]);
+        $result = $this->queryBuilder
+            ->table('users')
+            ->where('email', 'mahdishahipro@gmail.com')
+            ->where('fullname', 'mahdishahi')
+            ->get(['fullname', 'email', 'profile_image_id']);
+        $this->assertIsArray($result);
+        $this->assertObjectHasProperty('fullname', $result[0]);
+        $this->assertObjectHasProperty('email', $result[0]);
+        $this->assertObjectHasProperty('profile_image_id', $result[0]);
+        $result = json_decode(json_encode($result[0]), true);
+        $this->assertEquals(['fullname', 'email', 'profile_image_id'], array_keys($result));
+    }
+
+    public function testItCanGetFirstRow()
     {
         $this->multipleInsertIntoDb(5, ['role' => 2]);
         $result = $this->queryBuilder
@@ -72,8 +98,8 @@ class QueryBuilderForUsersTableTest extends TestCase
 
     public function testFindbyMethodForGetData()
     {
-        $this->multipleInsertIntoDb(5, ['role'=>2]);
-        $this->multipleInsertIntoDb(1, ['role'=>1]);
+        $this->multipleInsertIntoDb(5, ['role' => 2]);
+        $this->multipleInsertIntoDb(1, ['role' => 1]);
         $result = $this->queryBuilder
             ->table('users')
             ->findBy('role', 1);
@@ -87,6 +113,69 @@ class QueryBuilderForUsersTableTest extends TestCase
         $this->assertObjectHasProperty('created_at', $result);
     }
 
+    public function testItCanFindDataWithId()
+    {
+        $this->insertIntoDb(['role' => 1]);
+        $id = $this->insertIntoDb(['role' => 3]);
+        $result = $this->queryBuilder
+            ->table('users')
+            ->find($id);
+        $this->assertIsObject($result);
+        $this->assertEquals($id, $result->id);
+    }
+
+    public function testItCanDeleteRecord()
+    {
+        $this->multipleInsertIntoDb(5, ['role' => 2, 'fullname' => 'mahyarshahi']);
+        $id = $this->insertIntoDb(['role' => 1]);
+        $result = $this->queryBuilder
+            ->table('users')
+            ->where('fullname', 'mahdishahi')
+            ->delete();
+        $this->assertEquals(1, $result);
+    }
+
+    public function testItCanGetUsersCount()
+    {
+        $this->multipleInsertIntoDb(10);
+        $result = $this->queryBuilder
+            ->table('users')
+            ->count();
+        $this->assertIsArray($result);
+        $this->assertEquals(10, $result['count']);
+    }
+
+    public function testItReturnsEmptyArrayWhenRecordNotFound()
+    {
+        $this->multipleInsertIntoDb(5, ['role' => 3]);
+        $result  = $this->queryBuilder
+            ->table('users')
+            ->where('fullname', 'clkewrjaq')
+            ->get();
+        $this->assertIsArray($result);
+        $this->assertEmpty($result);
+    }
+
+    public function testItReturnsZeroWhenRecordNotFoundForUpdate()
+    {
+        $this->multipleInsertIntoDb(5, ['role' => 3]);
+        $result = $this->queryBuilder
+            ->table('users')
+            ->where('fullname', 'okjo')
+            ->update(['fullname' => 'test']);
+        $this->assertEquals(0, $result);
+    }
+
+    public function testItReturnsNullWhenFirstRecordNotFound()
+    {
+        $this->multipleInsertIntoDb(5, ['role' => 2]);
+        $result = $this->queryBuilder
+            ->table('users')
+            ->where('fullname', 'mahdi')
+            ->first();
+        $this->assertNull($result);
+    }
+
     private function insertIntoDb(array $options = [])
     {
         $data = $this->dataForUsersTable($options);
@@ -95,7 +184,7 @@ class QueryBuilderForUsersTableTest extends TestCase
             ->create($data);
     }
 
-    private function multipleInsertIntoDb(int $count, array $options)
+    private function multipleInsertIntoDb(int $count, array $options = [])
     {
         for ($i = 1; $i <= $count; $i++) {
             $this->insertIntoDb($options);
@@ -110,53 +199,6 @@ class QueryBuilderForUsersTableTest extends TestCase
             'password'         => 'Mahdi1',
             'profile_image_id' => 1,
         ], $options);
-    }
-
-    private function dataForPostTable($options = [])
-    {
-        $article = $this->generateArticles();
-        return array_merge([
-            'title'         => $article['title'],
-            'content_text'  => $article['content'],
-            'image_id'      => 1,
-            'author'        => $article['author'],
-            'categorie_id'  => 1,
-        ], $options);
-    }
-
-    private function dataForCommentsTable($options)
-    {
-        return array_merge([
-            'post_id'           => 1,
-            'user_id'           => 1,
-            'text'              => 'This is a test comment text',
-            'profile_image_id'  => 1,
-        ], $options);
-    }
-
-    private function generateArticles()
-    {
-        $titles = array(
-            "The Importance of Time Management",
-            "Exploring the Wonders of Nature",
-            "The Rise of Artificial Intelligence",
-            "The Benefits of Regular Exercise",
-            "Understanding Quantum Mechanics"
-        );
-
-        $authors = array(
-            "John Doe",
-            "Jane Smith",
-            "David Johnson",
-            "Emily Brown",
-            "Michael Wilson"
-        );
-
-        $randomTitle = array_rand($titles);
-        $randomAuthor = array_rand($authors);
-        $content = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. Mauris massa. Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Curabitur sodales ligula in libero.Sed dignissim lacinia nunc. Curabitur tortor. Pellentesque nibh. Aenean quam. In scelerisque sem at dolor. Maecenas mattis. Sed convallis tristique sem. Proin ut ligula vel nunc egestas porttitor. Morbi lectus risus, iaculis vel, suscipit quis, luctus non, massa. Fusce ac turpis quis ligula lacinia aliquet. Mauris ipsum. Nulla metus metus, ullamcorper vel, tincidunt sed, euismod in, nibh.";
-
-        return ['title' => $randomTitle, 'author' => $randomAuthor, 'content' => $content];
     }
 
     private function getConfig()

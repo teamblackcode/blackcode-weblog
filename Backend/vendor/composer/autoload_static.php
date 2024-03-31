@@ -20,10 +20,6 @@ class ComposerStaticInit1c14e22e9b7c9a63f27d9630c4a6d585
         array (
             'PhpParser\\' => 10,
         ),
-        'M' => 
-        array (
-            'Medoo\\' => 6,
-        ),
         'D' => 
         array (
             'DeepCopy\\' => 9,
@@ -42,10 +38,6 @@ class ComposerStaticInit1c14e22e9b7c9a63f27d9630c4a6d585
         'PhpParser\\' => 
         array (
             0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
-        ),
-        'Medoo\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/catfan/medoo/src',
         ),
         'DeepCopy\\' => 
         array (

@@ -3,6 +3,7 @@
 namespace App\Database;
 
 use App\Contracts\QueryBuilderInterface;
+use PDO;
 
 class QueryBuilder implements QueryBuilderInterface
 {
@@ -34,7 +35,14 @@ class QueryBuilder implements QueryBuilderInterface
         return $this;
     }
 
-    public function create(array $data): int
+    public function count()
+    {
+        $sql = "SELECT COUNT(id) AS count FROM {$this->table}";
+        $this->execute($sql);
+        return $this->statement->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function create(array $data)
     {
         $placeholder = [];
         foreach ($data as $column => $key) {
@@ -48,7 +56,7 @@ class QueryBuilder implements QueryBuilderInterface
         return (int)$this->connection->lastInsertId();
     }
 
-    public function update(array $data): int
+    public function update(array $data)
     {
         $fields = [];
         foreach ($data as $column => $value) {
@@ -60,9 +68,11 @@ class QueryBuilder implements QueryBuilderInterface
         return $this->statement->rowCount();
     }
 
-    public function delete(int $id): int
+    public function delete()
     {
-        return 5;
+        $sql = "DELETE FROM {$this->table} WHERE {$this->conditions}";
+        $this->execute($sql);
+        return $this->statement->rowCount();
     }
 
     public function get(array $columns = ['*'])
@@ -73,17 +83,18 @@ class QueryBuilder implements QueryBuilderInterface
         return $this->statement->fetchAll();
     }
 
-    public function first(array $columns = ['*']): object
+    public function first(array $columns = ['*'])
     {
         $data = $this->get($columns);
-        return empty($data) ? null: $data[0];
+        return empty($data) ? null : $data[0];
     }
 
     public function find(int $id)
     {
+        return $this->where('id', $id)->first();
     }
 
-    public function findBy(string $column, $value): object
+    public function findBy(string $column, $value)
     {
         return $this->where($column, $value)->first();
     }
@@ -104,5 +115,9 @@ class QueryBuilder implements QueryBuilderInterface
         $this->statement->execute($this->values);
         $this->values = [];
         return $this;
+    }
+    public function __destruct()
+    {
+        $this->connection = null;
     }
 }
