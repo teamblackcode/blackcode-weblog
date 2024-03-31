@@ -38,6 +38,55 @@ class QueryBuilderForUsersTableTest extends TestCase
         $this->assertEquals(10, $result);
     }
 
+    public function testItCanGetData()
+    {
+        $this->multipleInsertIntoDb(5, ['role' => 1]);
+        $this->multipleInsertIntoDb(5, ['role' => 2]);
+        $this->multipleInsertIntoDb(5, ['role' => 3]);
+        $result = $this->queryBuilder
+            ->table('users')
+            ->where('role', 2)
+            ->where('email', 'mahdishahipro@gmail.com')
+            ->get(['email']);
+        $this->assertIsArray($result);
+        $this->assertNotNull($result);
+        $this->assertObjectHasProperty('email', $result[0]);
+    }
+
+    public function testItCanGetFirstData()
+    {
+        $this->multipleInsertIntoDb(5, ['role' => 2]);
+        $result = $this->queryBuilder
+            ->table('users')
+            ->where('email', 'mahdishahipro@gmail.com')
+            ->first();
+        $this->assertNotNull($result);
+        $this->assertObjectHasProperty('fullname', $result);
+        $this->assertObjectHasProperty('email', $result);
+        $this->assertObjectHasProperty('password', $result);
+        $this->assertObjectHasProperty('profile_image_id', $result);
+        $this->assertObjectHasProperty('role', $result);
+        $this->assertObjectHasProperty('created_at', $result);
+        $this->assertEquals(2, $result->role);
+    }
+
+    public function testFindbyMethodForGetData()
+    {
+        $this->multipleInsertIntoDb(5, ['role'=>2]);
+        $this->multipleInsertIntoDb(1, ['role'=>1]);
+        $result = $this->queryBuilder
+            ->table('users')
+            ->findBy('role', 1);
+        $this->assertIsObject($result);
+        $this->assertEquals(1, $result->role);
+        $this->assertObjectHasProperty('fullname', $result);
+        $this->assertObjectHasProperty('email', $result);
+        $this->assertObjectHasProperty('password', $result);
+        $this->assertObjectHasProperty('profile_image_id', $result);
+        $this->assertObjectHasProperty('role', $result);
+        $this->assertObjectHasProperty('created_at', $result);
+    }
+
     private function insertIntoDb(array $options = [])
     {
         $data = $this->dataForUsersTable($options);

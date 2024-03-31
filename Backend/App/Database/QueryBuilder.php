@@ -48,11 +48,6 @@ class QueryBuilder implements QueryBuilderInterface
         return (int)$this->connection->lastInsertId();
     }
 
-    public function fetch(array $columns): object
-    {
-        return (object)[];
-    }
-
     public function update(array $data): int
     {
         $fields = [];
@@ -70,19 +65,27 @@ class QueryBuilder implements QueryBuilderInterface
         return 5;
     }
 
-    public function get(array $columns): object
+    public function get(array $columns = ['*'])
     {
-        return (object)[];
+        $fields = implode(', ', $columns);
+        $sql = "SELECT {$fields} FROM {$this->table} WHERE {$this->conditions}";
+        $this->execute($sql);
+        return $this->statement->fetchAll();
     }
 
-    public function first(array $columns): object
+    public function first(array $columns = ['*']): object
     {
-        return (object)[];
+        $data = $this->get($columns);
+        return empty($data) ? null: $data[0];
     }
 
-    public function findBy(string $columns, $value): object
+    public function find(int $id)
     {
-        return (object)[];
+    }
+
+    public function findBy(string $column, $value): object
+    {
+        return $this->where($column, $value)->first();
     }
 
     public function beginTransaction()
