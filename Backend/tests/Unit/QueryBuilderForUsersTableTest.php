@@ -12,11 +12,13 @@ use PHPUnit\Framework\TestCase;
 class QueryBuilderForUsersTableTest extends TestCase
 {
     private $queryBuilder;
+    private $table;
 
     public function setUp(): void
     {
         $pdoConnection = new PDODatabaseConnection($this->getConfig());
         $this->queryBuilder = new QueryBuilder($pdoConnection->connect());
+        $this->table = 'users';
         $this->queryBuilder->beginTransaction();
         parent::setUp();
     }
@@ -32,7 +34,7 @@ class QueryBuilderForUsersTableTest extends TestCase
     {
         $this->multipleInsertIntoDb(10, ['role' => 1]);
         $result = $this->queryBuilder
-            ->table('users')
+            ->table($this->table)
             ->where('email', 'mahdishahipro@gmail.com')
             ->update(['email' => 'mahdishahiwindows@gmail.com', 'fullname' => 'mohaddese panahi']);
         $this->assertEquals(10, $result);
@@ -42,7 +44,7 @@ class QueryBuilderForUsersTableTest extends TestCase
     {
         $this->multipleInsertIntoDb(10, ['role' => 1]);
         $result = $this->queryBuilder
-            ->table('users')
+            ->table($this->table)
             ->where('email', 'mahdishahipro@gmail.com')
             ->where('fullname', 'mahdishahi')
             ->update(['email' => 'mahdishahiwindows@gmail.com', 'fullname' => 'mohaddese panahi']);
@@ -55,7 +57,7 @@ class QueryBuilderForUsersTableTest extends TestCase
         $this->multipleInsertIntoDb(5, ['role' => 1]);
         $this->multipleInsertIntoDb(5, ['role' => 2]);
         $result = $this->queryBuilder
-            ->table('users')
+            ->table($this->table)
             ->where('role', 2)
             ->where('email', 'mahdishahipro@gmail.com')
             ->get();
@@ -67,7 +69,7 @@ class QueryBuilderForUsersTableTest extends TestCase
     {
         $this->multipleInsertIntoDb(10, ['role' => 2]);
         $result = $this->queryBuilder
-            ->table('users')
+            ->table($this->table)
             ->where('email', 'mahdishahipro@gmail.com')
             ->where('fullname', 'mahdishahi')
             ->get(['fullname', 'email', 'profile_image_id']);
@@ -83,10 +85,11 @@ class QueryBuilderForUsersTableTest extends TestCase
     {
         $this->multipleInsertIntoDb(5, ['role' => 2]);
         $result = $this->queryBuilder
-            ->table('users')
+            ->table($this->table)
             ->where('email', 'mahdishahipro@gmail.com')
             ->first();
         $this->assertNotNull($result);
+        $this->assertIsObject($result);
         $this->assertObjectHasProperty('fullname', $result);
         $this->assertObjectHasProperty('email', $result);
         $this->assertObjectHasProperty('password', $result);
@@ -101,7 +104,7 @@ class QueryBuilderForUsersTableTest extends TestCase
         $this->multipleInsertIntoDb(5, ['role' => 2]);
         $this->multipleInsertIntoDb(1, ['role' => 1]);
         $result = $this->queryBuilder
-            ->table('users')
+            ->table($this->table)
             ->findBy('role', 1);
         $this->assertIsObject($result);
         $this->assertEquals(1, $result->role);
@@ -118,7 +121,7 @@ class QueryBuilderForUsersTableTest extends TestCase
         $this->insertIntoDb(['role' => 0]);
         $id = $this->insertIntoDb(['role' => 2]);
         $result = $this->queryBuilder
-            ->table('users')
+            ->table($this->table)
             ->find($id);
         $this->assertIsObject($result);
         $this->assertEquals($id, $result->id);
@@ -129,7 +132,7 @@ class QueryBuilderForUsersTableTest extends TestCase
         $this->multipleInsertIntoDb(5, ['role' => 2, 'fullname' => 'mahyarshahi']);
         $id = $this->insertIntoDb(['role' => 1]);
         $result = $this->queryBuilder
-            ->table('users')
+            ->table($this->table)
             ->where('fullname', 'mahdishahi')
             ->delete();
         $this->assertEquals(1, $result);
@@ -139,7 +142,7 @@ class QueryBuilderForUsersTableTest extends TestCase
     {
         $this->multipleInsertIntoDb(10);
         $result = $this->queryBuilder
-            ->table('users')
+            ->table($this->table)
             ->count();
         $this->assertIsArray($result);
         $this->assertEquals(10, $result['count']);
@@ -149,7 +152,7 @@ class QueryBuilderForUsersTableTest extends TestCase
     {
         $this->multipleInsertIntoDb(5, ['role' => 2]);
         $result  = $this->queryBuilder
-            ->table('users')
+            ->table($this->table)
             ->where('fullname', 'clkewrjaq')
             ->get();
         $this->assertIsArray($result);
@@ -160,7 +163,7 @@ class QueryBuilderForUsersTableTest extends TestCase
     {
         $this->multipleInsertIntoDb(5, ['role' => 1]);
         $result = $this->queryBuilder
-            ->table('users')
+            ->table($this->table)
             ->where('fullname', 'okjo')
             ->update(['fullname' => 'test']);
         $this->assertEquals(0, $result);
@@ -170,7 +173,7 @@ class QueryBuilderForUsersTableTest extends TestCase
     {
         $this->multipleInsertIntoDb(5, ['role' => 0]);
         $result = $this->queryBuilder
-            ->table('users')
+            ->table($this->table)
             ->where('fullname', 'mahdi')
             ->first();
         $this->assertNull($result);
@@ -180,7 +183,7 @@ class QueryBuilderForUsersTableTest extends TestCase
     {
         $data = $this->dataForUsersTable($options);
         return $this->queryBuilder
-            ->table('users')
+            ->table($this->table)
             ->create($data);
     }
 

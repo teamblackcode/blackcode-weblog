@@ -10,11 +10,13 @@ use PHPUnit\Framework\TestCase;
 class QueryBuilderForArticlesTableTest extends TestCase
 {
     private $queryBuilder;
+    private $table;
 
     public function setUp(): void
     {
         $pdoConnection = new PDODatabaseConnection($this->getConfig());
         $this->queryBuilder = new QueryBuilder($pdoConnection->connect());
+        $this->table = 'posts';
         $this->queryBuilder->beginTransaction();
         parent::setUp();
     }
@@ -31,7 +33,7 @@ class QueryBuilderForArticlesTableTest extends TestCase
         $this->multipleInsertIntoDb(5, ['status' => 4]);
         $this->multipleInsertIntoDb(5, ['status' => 2]);
         $result = $this->queryBuilder
-            ->table('posts')
+            ->table($this->table)
             ->where('status', 2)
             ->update(['status' => 3]);
         $this->assertEquals(5, $result);
@@ -42,7 +44,7 @@ class QueryBuilderForArticlesTableTest extends TestCase
         $this->multipleInsertIntoDb(5, ['status' => 4]);
         $this->multipleInsertIntoDb(5, ['status' => 2]);
         $result = $this->queryBuilder
-            ->table('posts')
+            ->table($this->table)
             ->where('categorie_id', 1)
             ->where('status', 2)
             ->update(['status' => 1, 'title' => "updated"]);
@@ -54,7 +56,7 @@ class QueryBuilderForArticlesTableTest extends TestCase
         $this->multipleInsertIntoDb(5, ['status' => 2]);
         $this->multipleInsertIntoDb(5, ['status' => 3]);
         $result = $this->queryBuilder
-            ->table('posts')
+            ->table($this->table)
             ->where('status', 3)
             ->get();
         $this->assertIsArray($result);
@@ -75,7 +77,7 @@ class QueryBuilderForArticlesTableTest extends TestCase
         $this->multipleInsertIntoDb(5, ['status' => 2]);
         $this->multipleInsertIntoDb(5, ['status' => 1]);
         $result = $this->queryBuilder
-            ->table('posts')
+            ->table($this->table)
             ->where('status', 1)
             ->get(['title', 'content_text', 'author']);
         $this->assertIsArray($result);
@@ -89,7 +91,7 @@ class QueryBuilderForArticlesTableTest extends TestCase
     {
         $this->multipleInsertIntoDb(5, ['status' => 3]);
         $result = $this->queryBuilder
-            ->table('posts')
+            ->table($this->table)
             ->where('status', 3)
             ->first();
         $this->assertNotNull($result);
@@ -109,7 +111,7 @@ class QueryBuilderForArticlesTableTest extends TestCase
         $this->multipleInsertIntoDb(5, ['status' => 4]);
         $this->multipleInsertIntoDb(1, ['status' => 2]);
         $result = $this->queryBuilder
-            ->table('posts')
+            ->table($this->table)
             ->findBy('status', 2);
         $this->assertIsObject($result);
         $this->assertEquals(2, $result->status);
@@ -129,7 +131,7 @@ class QueryBuilderForArticlesTableTest extends TestCase
         $this->insertIntoDb(['status' => 3]);
         $id = $this->insertIntoDb(['status' => 2]);
         $result = $this->queryBuilder
-            ->table('posts')
+            ->table($this->table)
             ->find($id);
         $this->assertIsObject($result);
         $this->assertEquals($id, $result->id);
@@ -140,7 +142,7 @@ class QueryBuilderForArticlesTableTest extends TestCase
         $this->multipleInsertIntoDb(5, ['status' => 3]);
         $id = $this->insertIntoDb(['status' => 2]);
         $result = $this->queryBuilder
-            ->table('posts')
+            ->table($this->table)
             ->where('id', $id)
             ->delete();
         $this->assertEquals(1, $result);
@@ -150,7 +152,7 @@ class QueryBuilderForArticlesTableTest extends TestCase
     {
         $this->multipleInsertIntoDb(10, ['status' => 3]);
         $result = $this->queryBuilder
-            ->table('posts')
+            ->table($this->table)
             ->count();
         $this->assertIsArray($result);
         $this->assertEquals(10, $result['count']);
@@ -160,7 +162,7 @@ class QueryBuilderForArticlesTableTest extends TestCase
     {
         $this->multipleInsertIntoDb(5, ['status' => 3]);
         $result = $this->queryBuilder
-            ->table('posts')
+            ->table($this->table)
             ->where('status', 5)
             ->get();
         $this->assertIsArray($result);
@@ -170,7 +172,7 @@ class QueryBuilderForArticlesTableTest extends TestCase
     {
         $this->multipleInsertIntoDb(5, ['status' => 1]);
         $result = $this->queryBuilder
-            ->table('posts')
+            ->table($this->table)
             ->where('status', '3')
             ->update(['status' => 4]);
         $this->assertEquals(0, $result);
@@ -180,7 +182,7 @@ class QueryBuilderForArticlesTableTest extends TestCase
     {
         $this->multipleInsertIntoDb(5, ['status' => 3]);
         $result = $this->queryBuilder
-            ->table('posts')
+            ->table($this->table)
             ->where('status', '4')
             ->first();
         $this->assertNull($result);
@@ -194,7 +196,7 @@ class QueryBuilderForArticlesTableTest extends TestCase
 
     public function insertIntoDb(array $options = [])
     {
-        return $this->queryBuilder->table('posts')->create($this->dataForPostTable($options));
+        return $this->queryBuilder->table($this->table)->create($this->dataForPostTable($options));
     }
 
     private function multipleInsertIntoDb(int $count, array $options = [])
