@@ -21,14 +21,14 @@ class QueryBuilderForUsersTableTest extends TestCase
         parent::setUp();
     }
 
-    public function testItCanCreateData()
+    public function testItCanCreateUser()
     {
         $result = $this->insertIntoDb(['role' => 2]);
         $this->assertIsInt($result);
         $this->assertGreaterThan(0, $result);
     }
 
-    public function testItCanUpdateData()
+    public function testItCanUpdateUser()
     {
         $this->multipleInsertIntoDb(10, ['role' => 1]);
         $result = $this->queryBuilder
@@ -49,11 +49,11 @@ class QueryBuilderForUsersTableTest extends TestCase
         $this->assertEquals(10, $result);
     }
 
-    public function testItCanGetData()
+    public function testItCanGetUser()
     {
+        $this->multipleInsertIntoDb(5, ['role' => 0]);
         $this->multipleInsertIntoDb(5, ['role' => 1]);
         $this->multipleInsertIntoDb(5, ['role' => 2]);
-        $this->multipleInsertIntoDb(5, ['role' => 3]);
         $result = $this->queryBuilder
             ->table('users')
             ->where('role', 2)
@@ -96,7 +96,7 @@ class QueryBuilderForUsersTableTest extends TestCase
         $this->assertEquals(2, $result->role);
     }
 
-    public function testFindbyMethodForGetData()
+    public function testFindbyMethodForGetUser()
     {
         $this->multipleInsertIntoDb(5, ['role' => 2]);
         $this->multipleInsertIntoDb(1, ['role' => 1]);
@@ -113,10 +113,10 @@ class QueryBuilderForUsersTableTest extends TestCase
         $this->assertObjectHasProperty('created_at', $result);
     }
 
-    public function testItCanFindDataWithId()
+    public function testItCanFindUserWithId()
     {
-        $this->insertIntoDb(['role' => 1]);
-        $id = $this->insertIntoDb(['role' => 3]);
+        $this->insertIntoDb(['role' => 0]);
+        $id = $this->insertIntoDb(['role' => 2]);
         $result = $this->queryBuilder
             ->table('users')
             ->find($id);
@@ -147,7 +147,7 @@ class QueryBuilderForUsersTableTest extends TestCase
 
     public function testItReturnsEmptyArrayWhenRecordNotFound()
     {
-        $this->multipleInsertIntoDb(5, ['role' => 3]);
+        $this->multipleInsertIntoDb(5, ['role' => 2]);
         $result  = $this->queryBuilder
             ->table('users')
             ->where('fullname', 'clkewrjaq')
@@ -158,7 +158,7 @@ class QueryBuilderForUsersTableTest extends TestCase
 
     public function testItReturnsZeroWhenRecordNotFoundForUpdate()
     {
-        $this->multipleInsertIntoDb(5, ['role' => 3]);
+        $this->multipleInsertIntoDb(5, ['role' => 1]);
         $result = $this->queryBuilder
             ->table('users')
             ->where('fullname', 'okjo')
@@ -168,7 +168,7 @@ class QueryBuilderForUsersTableTest extends TestCase
 
     public function testItReturnsNullWhenFirstRecordNotFound()
     {
-        $this->multipleInsertIntoDb(5, ['role' => 2]);
+        $this->multipleInsertIntoDb(5, ['role' => 0]);
         $result = $this->queryBuilder
             ->table('users')
             ->where('fullname', 'mahdi')
