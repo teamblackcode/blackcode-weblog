@@ -14,6 +14,7 @@ class FileUploader implements FileUploaderInterface
     private $allowedExtensions = ['png', 'jpg', 'jpeg', 'gif'];
     private $targetFolderName;
     private $fileDataArray;
+    private $generatedFileName;
 
     public function __construct($targetFolderName, $fileDataArray)
     {
@@ -31,15 +32,27 @@ class FileUploader implements FileUploaderInterface
         }
         $this->targetFolderName = $this->generateTargetFolderPath($targetFolderName);
         $this->fileDataArray = $fileDataArray;
+        $this->generatedFileName = $this->generateFileName($fileDataArray['name']);
     }
 
     public function upload()
     {
-        $currentFileName = $this->fileDataArray['name'];
-        $uploadedFileFullPath = $this->targetFolderName . '\\' . $currentFileName;
+        $uploadedFileFullPath = $this->targetFolderName . '\\' . $this->generatedFileName;
         if (move_uploaded_file($this->fileDataArray['tmp_name'], $uploadedFileFullPath)) {
             return "فایل با موفقیت بارگذاری شد";
+        } else {
+            return "خطا در بارگذاری فایل";
         }
+    }
+
+    public function getName()
+    {
+        return $this->generatedFileName;
+    }
+
+    private function generateFileName(string $name)
+    {
+        return uniqid() . time() . $name;
     }
 
     private function isValidFileName(string $name)

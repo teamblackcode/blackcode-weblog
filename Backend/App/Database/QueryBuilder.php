@@ -83,6 +83,14 @@ class QueryBuilder implements QueryBuilderInterface
         return $this->statement->fetchAll();
     }
 
+    public function getAll(array $columns = ['*'])
+    {
+        $fields = implode(', ', $columns);
+        $sql = "SELECT {$fields} FROM {$this->table}";
+        $this->execute($sql);
+        return $this->statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function first(array $columns = ['*'])
     {
         $data = $this->get($columns);
